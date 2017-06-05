@@ -31,29 +31,40 @@ public final class EmployeeDao {
     /**
      * Возвращает всех сотрудников
      */
+
     public List<Employee> findAll(Session session) {
-        return Collections.emptyList();
+
+        return session.createQuery("select e from Employee e ", Employee.class)
+                .getResultList();
     }
 
     /**
      * Возвращает всех сотрудников с указанным именем
      */
     public List<Employee> findAllByFirstName(Session session, String firstName) {
-        return Collections.emptyList();
+
+        return session.createQuery("select e from Employee e where e.firstName=:firstName", Employee.class)
+                .setParameter("firstName", "Bill")
+                .getResultList();
     }
 
     /**
      * Возвращает первые {limit} сотрудников, упорядоченных по дате рождения (в порядке возрастания)
      */
     public List<Employee> findLimitedEmployeesOrderedByBirthday(Session session, int limit) {
-        return Collections.emptyList();
+        return session.createQuery("select e from Employee as e order by e.birthday", Employee.class)
+                .setMaxResults(3)
+
+                .getResultList();
     }
 
     /**
      * Возвращает всех сотрудников организации с указанным названием
      */
     public List<Employee> findAllByOrganizationName(Session session, String organizationName) {
-        return Collections.emptyList();
+        return session.createQuery("select e from Employee e where e.organization.name=:org", Employee.class)
+                .setParameter("org", organizationName)
+                .getResultList();
     }
 
     /**
@@ -61,21 +72,30 @@ public final class EmployeeDao {
      * упорядоченные по имени сотрудника, а затем по размеру выплаты
      */
     public List<Payment> findAllPaymentsByOrganizationName(Session session, String organizationName) {
-        return Collections.emptyList();
+        return session.createQuery("select p from Payment p where p.receiver.organization.name=:org order by p.receiver.firstName, p.amount", Payment.class)
+                .setParameter("org", organizationName)
+                .getResultList();
     }
 
     /**
      * Возвращает среднюю зарплату сотрудника с указанными именем и фамилией
      */
     public Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
-        return null;
+        return session.createQuery("select avg(p.amount) from Payment p where p.receiver.firstName=:first and p.receiver.lastName=:last", Double.class)
+                .setParameter("first", firstName)
+                .setParameter("last", lastName)
+                .getSingleResult();
     }
 
     /**
      * Возвращает для каждой организации: название, среднюю зарплату всех её сотрудников. Организации упорядочены по названию.
      */
     public List<Object[]> findOrganizationNamesWithAvgEmployeePaymentsOrderedByOrgName(Session session) {
-        return Collections.emptyList();
+        return session.createQuery("select p.receiver.organization.name, avg (p.amount)  " +
+                "from Payment p group by p.receiver.organization.name order by p.receiver.organization.name", Object[].class)
+
+                .getResultList()
+                ;
     }
 
     /**
@@ -84,6 +104,7 @@ public final class EmployeeDao {
      * Упорядочить по имени сотрудника
      */
     public List<Object[]> canYouDoIt(Session session) {
+
         return Collections.emptyList();
     }
 }
