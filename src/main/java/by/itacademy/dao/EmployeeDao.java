@@ -105,6 +105,11 @@ public final class EmployeeDao {
      */
     public List<Object[]> canYouDoIt(Session session) {
 
-        return Collections.emptyList();
+        return session.createQuery("select p.receiver.firstName, avg (p.amount) from Payment p " +
+                "having avg (p.amount) > (select avg (p.amount) from Payment p) " +
+                "order by p.receiver.firstName", Object[].class)
+
+                .getResultList()
+                ;
     }
 }
